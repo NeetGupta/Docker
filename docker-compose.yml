@@ -3,17 +3,16 @@ services:
   backend:
     build: ./server
     ports:
-     - '5000:5000'
-    network: 
-     - chatnet
-
-   frontend:
-    build: ./client
-    ports:
-     - '3000:80'
-     networks:
+      - '5000:5000'
+    networks:
       - chatnet
 
-   networks:
-    chatnet:
-    
+  frontend:
+    build: ./client
+    ports:
+      - '3000:80'
+    networks:
+      - chatnet
+
+networks:
+  chatnet:
