@@ -46,7 +46,7 @@ pipeline {
                 }
             }
         }
-    }
+    
 
   /*
         stage('Push Image') {
