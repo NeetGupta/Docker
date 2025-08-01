@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        BACKEND_IMAGE = 'yourdockerhub/backend'
-        FRONTEND_IMAGE = 'yourdockerhub/frontend'
+        BACKEND_IMAGE = 'neetupgu/backend'
+        FRONTEND_IMAGE = 'neetupgu/frontend'
         TAG = "${BUILD_NUMBER}"
     }
 
