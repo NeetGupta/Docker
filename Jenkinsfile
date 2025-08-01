@@ -52,12 +52,12 @@ pipeline {
                 }
             }
         }
-    }
+    }*/
 
     post {
         failure {
             echo 'Deployment failed!'
         }
     }
-}*/
+}
 
