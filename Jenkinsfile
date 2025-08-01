@@ -25,13 +25,29 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+     stage('Build & Push Backend') {
             steps {
                 script {
-                    docker.build("${IMAGE_NAME}:${IMAGE_TAG}","client/","Server/")
+                    sh "docker build -t ${BACKEND_IMAGE}:${TAG} -f backend/Dockerfile backend/"
+                    withDockerRegistry([credentialsId: 'docker-cred', url: '']) {
+                        sh "docker push ${BACKEND_IMAGE}:${TAG}"
+                    }
                 }
             }
         }
+
+        stage('Build & Push Frontend') {
+            steps {
+                script {
+                    sh "docker build -t ${FRONTEND_IMAGE}:${TAG} -f frontend/Dockerfile frontend/"
+                    withDockerRegistry([credentialsId: 'docker-cred', url: '']) {
+                        sh "docker push ${FRONTEND_IMAGE}:${TAG}"
+                    }
+                }
+            }
+        }
+    }
+
 
         stage('Push Image') {
             steps {
