@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/NeetGupta/Docker'
+               git credentialsId: 'github-token', url: 'https://github.com/your-username/your-repo.git'
             }
         }
 
