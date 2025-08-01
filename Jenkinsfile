@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/your-repo/real-time-node-app.git'
+                git 'https://github.com/NeetGupta/Docker'
             }
         }
 
@@ -34,7 +34,7 @@ pipeline {
         stage('Push Image') {
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials-id') {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-cred') {
                         docker.image("${IMAGE_NAME}:${IMAGE_TAG}").push()
                     }
                 }
