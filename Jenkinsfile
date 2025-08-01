@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'your-dockerhub-username/real-time-node-app'
+        IMAGE_NAME = 'chat'
         IMAGE_TAG = ''
         KUBE_NAMESPACE = 'default'
         DEPLOYMENT_NAME = 'real-time-node-app'
