@@ -48,7 +48,7 @@ pipeline {
         }
     }
 
-
+  /*
         stage('Push Image') {
             steps {
                 script {
@@ -59,7 +59,7 @@ pipeline {
             }
         }
 
-        /*
+      
         stage('Deploy to Kubernetes') {
             steps {
                 script {
