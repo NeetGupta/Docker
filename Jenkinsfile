@@ -2,35 +2,24 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'chat'
-        IMAGE_TAG = ''
-        KUBE_NAMESPACE = 'default'
-        DEPLOYMENT_NAME = 'real-time-node-app'
+        BACKEND_IMAGE = 'yourdockerhub/backend'
+        FRONTEND_IMAGE = 'yourdockerhub/frontend'
+        TAG = "${BUILD_NUMBER}"
     }
 
     stages {
         stage('Checkout') {
             steps {
-              git branch: 'main',
-            credentialsId: 'Github-ID',
-            url: 'https://github.com/NeetGupta/Docker.git'
+                git credentialsId: 'Github-ID', url: 'https://github.com/NeetGupta/Docker.git', branch: 'main'
             }
         }
 
-        stage('Set Image Tag') {
+        stage('Build & Push Backend') {
             steps {
                 script {
-                    IMAGE_TAG = env.BUILD_NUMBER
-                }
-            }
-        }
-
-     stage('Build & Push Backend') {
-            steps {
-                script {
-                    sh "docker build -t ${BACKEND_IMAGE}:${TAG} -f backend/Dockerfile backend/"
+                    sh "docker build -t ${env.BACKEND_IMAGE}:${env.TAG} -f backend/Dockerfile backend/"
                     withDockerRegistry([credentialsId: 'docker-cred', url: '']) {
-                        sh "docker push ${BACKEND_IMAGE}:${TAG}"
+                        sh "docker push ${env.BACKEND_IMAGE}:${env.TAG}"
                     }
                 }
             }
@@ -39,49 +28,18 @@ pipeline {
         stage('Build & Push Frontend') {
             steps {
                 script {
-                    sh "docker build -t ${FRONTEND_IMAGE}:${TAG} -f frontend/Dockerfile frontend/"
+                    sh "docker build -t ${env.FRONTEND_IMAGE}:${env.TAG} -f frontend/Dockerfile frontend/"
                     withDockerRegistry([credentialsId: 'docker-cred', url: '']) {
-                        sh "docker push ${FRONTEND_IMAGE}:${TAG}"
+                        sh "docker push ${env.FRONTEND_IMAGE}:${env.TAG}"
                     }
                 }
             }
         }
-    
-
-  /*
-        stage('Push Image') {
-            steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-cred') {
-                        docker.image("${IMAGE_NAME}:${IMAGE_TAG}").push()
-                    }
-                }
-            }
-        }
-
-      
-        stage('Deploy to Kubernetes') {
-            steps {
-                script {
-                    sh """
-                    kubectl set image deployment/${DEPLOYMENT_NAME} ${DEPLOYMENT_NAME}=${IMAGE_NAME}:${IMAGE_TAG} -n ${KUBE_NAMESPACE} || \
-                    kubectl create deployment ${DEPLOYMENT_NAME} --image=${IMAGE_NAME}:${IMAGE_TAG} -n ${KUBE_NAMESPACE}
-                    """
-
-                    sh """
-                    kubectl expose deployment ${DEPLOYMENT_NAME} --type=LoadBalancer --port=3000 --target-port=3000 -n ${KUBE_NAMESPACE} --dry-run=client -o yaml | kubectl apply -f -
-                    """
-
-                    sh "kubectl rollout status deployment/${DEPLOYMENT_NAME} -n ${KUBE_NAMESPACE}"
-                }
-            }
-        }
-        */
     }
 
     post {
         failure {
-            echo 'Deployment failed!'
+            echo 'Build or Push Failed!'
         }
     }
 }
