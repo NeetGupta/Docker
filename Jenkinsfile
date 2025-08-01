@@ -51,8 +51,8 @@ pipeline {
                     sh "kubectl rollout status deployment/${DEPLOYMENT_NAME} -n ${KUBE_NAMESPACE}"
                 }
             }
-        }
-    }*/
+        }*/
+    }
 
     post {
         failure {
