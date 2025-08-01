@@ -14,10 +14,10 @@ pipeline {
             }
         }
 
-        stage('Build & Push Backend') {
+        stage('Build & Push Server') {
             steps {
                 script {
-                    sh "docker build -t ${env.BACKEND_IMAGE}:${env.TAG} -f backend/Dockerfile backend/"
+                    sh "docker build -t ${env.BACKEND_IMAGE}:${env.TAG} -f Server/Dockerfile Server/"
                     withDockerRegistry([credentialsId: 'docker-cred', url: '']) {
                         sh "docker push ${env.BACKEND_IMAGE}:${env.TAG}"
                     }
@@ -25,10 +25,10 @@ pipeline {
             }
         }
 
-        stage('Build & Push Frontend') {
+        stage('Build & Push client') {
             steps {
                 script {
-                    sh "docker build -t ${env.FRONTEND_IMAGE}:${env.TAG} -f frontend/Dockerfile frontend/"
+                    sh "docker build -t ${env.FRONTEND_IMAGE}:${env.TAG} -f client/Dockerfile client/"
                     withDockerRegistry([credentialsId: 'docker-cred', url: '']) {
                         sh "docker push ${env.FRONTEND_IMAGE}:${env.TAG}"
                     }
