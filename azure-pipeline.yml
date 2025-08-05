@@ -1,0 +1,48 @@
+trigger:
+  branches:
+    include:
+      - main
+
+variables:
+  BACKEND_IMAGE: 'neetupgu/backend'
+  FRONTEND_IMAGE: 'neetupgu/frontend'
+  BUILD_NUMBER: $[counter('build_num', 1)]  # auto-incremented counter
+  TAG: $(BUILD_NUMBER)
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - checkout: self
+
+  # Log in to Docker Hub
+  - task: Docker@2
+    displayName: 'Login to Docker Hub'
+    inputs:
+      command: login
+      containerRegistry: 'docker-cred'  # ⚠️ must match the name of your Docker Hub service connection
+
+  # Build and push backend
+  - task: Docker@2
+    displayName: 'Build & Push Backend Image'
+    inputs:
+      command: 'buildAndPush'
+      repository: 'neetupgu/backend'
+      dockerfile: 'Server/Dockerfile'
+      tags: |
+        $(TAG)
+      buildContext: 'Server'
+
+  # Build and push frontend
+  - task: Docker@2
+    displayName: 'Build & Push Frontend Image'
+    inputs:
+      command: 'buildAndPush'
+      repository: 'neetupgu/frontend'
+      dockerfile: 'client/Dockerfile'
+      tags: |
+        $(TAG)
+      buildContext: 'client'
+
+  # Optional: print success message
+  - script: echo "✅ Build & Push completed successfully."
